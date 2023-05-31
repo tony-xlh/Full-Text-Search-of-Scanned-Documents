@@ -1,7 +1,7 @@
-import '../styles/index.scss';
+import '../styles/document.scss';
 import { Index } from "flexsearch";
 
-console.log('index page');
+console.log('document page');
 
 /**
  * FlexSearch v0.7.x example
