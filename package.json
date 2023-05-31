@@ -6,8 +6,8 @@
     "lint": "npm run lint:styles; npm run lint:scripts",
     "lint:styles": "stylelint src",
     "lint:scripts": "eslint src",
-    "build": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.js",
-    "start": "webpack serve --config webpack/webpack.config.dev.js"
+    "build": "ncp node_modules/dwt/dist public/dwt-resources && cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.js",
+    "start": "ncp node_modules/dwt/dist public/dwt-resources && webpack serve --config webpack/webpack.config.dev.js"
   },
   "repository": {
     "type": "git",
@@ -43,6 +43,7 @@
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.1",
+    "ncp": "^2.0.0",
     "node-sass": "^8.0.0",
     "postcss-loader": "^7.0.2",
     "postcss-preset-env": "^7.8.3",
