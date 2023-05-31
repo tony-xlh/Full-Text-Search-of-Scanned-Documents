@@ -259,6 +259,7 @@ async function LoadProject(){
           PDF,
           function () {
             console.log("success");
+            showTextOfPage(0);
           },
           function (errorCode, errorString) {
             console.log(errorString);
