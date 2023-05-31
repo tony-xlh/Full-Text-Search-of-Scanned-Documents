@@ -1,24 +1,25 @@
-import '../styles/index.scss';
-import { Index } from "flexsearch";
+import localForage from "localforage";
 
-console.log('index page');
+ListScannedDocuments();
 
-/**
- * FlexSearch v0.7.x example
- */
-const index = new Index();
+async function ListScannedDocuments(){
+  let documents = document.getElementsByClassName("documents")[0];
+  const keys = await localForage.keys();
+  for (let index = 0; index < keys.length; index++) {
+    const key = keys[index];
+    if (key.endsWith("PDF")) {
+      const timestamp = key.substring(0,13);
+      AddOneDocumentItem(timestamp,documents);
+    }
+  }
+}
 
-const document = [
-  { id: `threecat`, body: `cat meows. cat stretch. cat sleep.` },
-  { id: `onecat`, body: `cat is still asleep` },
-  { id: `catcatdogdog`, body: `dog barks at cat. cat runs from dog.` },
-  { id: `onedog`, body: `dog sleeps` },
-  { id: `threedog`, body: `dog woofs. dog chases tail. dog sleeps` }
-];
-document.forEach(({ id, body }) => {
-  index.add(id, body);
-});
-
-console.log(index);
-
-console.log(index.search("cat meows"));
+function AddOneDocumentItem(timestamp,parent) {
+  let listItem = document.createElement("li");
+  let link = document.createElement("a");
+  link.href = "document.html?timestamp="+timestamp;
+  link.target = "_blank";
+  link.innerText = new Date(parseInt(timestamp)).toLocaleString();
+  listItem.appendChild(link);
+  parent.appendChild(listItem);
+}
