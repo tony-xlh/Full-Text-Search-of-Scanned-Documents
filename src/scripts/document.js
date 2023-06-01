@@ -2,11 +2,15 @@ import Dynamsoft from "dwt";
 import { createWorker } from 'tesseract.js';
 import { getUrlParam } from './utils';
 import localForage from "localforage";
+import { Index } from "flexsearch";
 
 let DWObject;
 let worker;
 let resultsDict = {};
 let timestamp = undefined;
+
+const documentIndex = new Index();
+window.documentIndex = documentIndex;
 
 window.onload = function(){
   initDWT();
@@ -63,6 +67,15 @@ function registerEvents() {
 
   document.getElementsByClassName("save-pdf-btn")[0].addEventListener("click",function(){
     SaveAsPDF();
+  });
+
+  document.getElementsByClassName("index-btn")[0].addEventListener("click",function(){
+    IndexDocument();
+    alert("Indexed");
+  });
+
+  document.getElementsByClassName("search-btn")[0].addEventListener("click",function(){
+    search();
   });
 }
 
@@ -190,11 +203,9 @@ function getJoinedText(){
 
 async function SaveDocument() {
   document.getElementsByClassName("save-btn")[0].innerText = "Saving...";
-  if (!timestamp) {
-    timestamp = Date.now();
-  }
   await SaveOCRResults(timestamp);
   await SavePages(timestamp);
+  SaveIndexToIndexedDB();
   document.getElementsByClassName("save-btn")[0].innerText = "Save to IndexedDB";
   alert("Saved");
 }
@@ -248,6 +259,7 @@ function getAllImageIndex(){
 async function LoadProject(){
   timestamp = getUrlParam("timestamp");
   if (timestamp) {
+    LoadIndexFromIndexedDB();
     const OCRData = await localForage.getItem(timestamp+"-OCR-Data");
     if (OCRData) {
       resultsDict = OCRData;
@@ -267,5 +279,58 @@ async function LoadProject(){
         );
       }
     }
+  }else{
+    timestamp = Date.now();
+  }
+}
+
+function IndexDocument(){
+  const document = [];
+  for (let i = 0; i < DWObject.HowManyImagesInBuffer; i++) {
+    const result = resultsDict[i];
+    if (result) {
+      const id = timestamp+"-"+i;
+      document.push({id:id,body:result.data.text});
+    }
+  }
+  document.forEach(({ id, body }) => {
+    if (id in Object.keys(documentIndex.register)) {
+      documentIndex.remove(id);
+    }
+    documentIndex.add(id, body);
+  });
+}
+
+function SaveIndexToIndexedDB(){
+  console.log("save");
+}
+
+function LoadIndexFromIndexedDB(){
+  console.log("load");
+}
+
+function search(){
+  document.getElementsByClassName("search-result-container")[0].style.display = "";
+  const keywords = document.getElementById("keywords").value;
+  const startTime = Date.now();
+  const results = documentIndex.search(keywords);
+  const endTime = Date.now();
+  console.log(results);
+  const info = document.getElementsByClassName("search-result-info")[0];
+  info.innerText = "The keywords are found in the following pages in "+(endTime - startTime)+"ms";
+  const ul = document.getElementsByClassName("search-result-list")[0];
+  ul.innerHTML = "";
+  for (let index = 0; index < results.length; index++) {
+    const result = results[index];
+    const pageIndex = parseInt(result.split("-")[1]);
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = "javascript:void();";
+    link.addEventListener("click",function(){
+      DWObject.CurrentImageIndexInBuffer = pageIndex;
+    });
+    link.innerText = "Page "+(pageIndex+1);
+    item.append(link);
+    ul.append(item);
   }
 }
