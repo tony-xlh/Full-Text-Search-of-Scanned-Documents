@@ -9,6 +9,10 @@ let worker;
 let resultsDict = {};
 let timestamp = undefined;
 
+let indexStore = localForage.createInstance({
+  name: "index"
+});
+
 const documentIndex = new Index();
 window.documentIndex = documentIndex;
 
@@ -205,7 +209,7 @@ async function SaveDocument() {
   document.getElementsByClassName("save-btn")[0].innerText = "Saving...";
   await SaveOCRResults(timestamp);
   await SavePages(timestamp);
-  SaveIndexToIndexedDB();
+  await SaveIndexToIndexedDB();
   document.getElementsByClassName("save-btn")[0].innerText = "Save to IndexedDB";
   alert("Saved");
 }
@@ -302,11 +306,24 @@ function IndexDocument(){
 }
 
 function SaveIndexToIndexedDB(){
-  console.log("save");
+  return new Promise(function(resolve){
+    documentIndex.export(async function(key, data){ 
+      // do the saving as async
+      console.log(key);
+      await indexStore.setItem(key, data);
+      resolve();
+    });
+  });
 }
 
-function LoadIndexFromIndexedDB(){
+async function LoadIndexFromIndexedDB(){
   console.log("load");
+  const keys = await indexStore.keys();
+  console.log(keys);
+  for (const key of keys) {
+    const content = await indexStore.getItem(key);
+    documentIndex.import(key, content);
+  }
 }
 
 function search(){
