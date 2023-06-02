@@ -14,20 +14,12 @@
     <div>List of scanned documents:</div>
     <ul class="documents">
     </ul>
-    <div><button onclick="NewDocument()">New Document</button></div>
     <div>
-      
-      <div>
-        <h3>Search</h3>
-        <input type="text" id="keywords"/>
-        <button class="search-btn">Search</button>
-        <div class="search-result-container" style="display:none;">
-          <div class="search-result-info"></div>
-          <ul class="search-result-list"></ul>
-        </div>
-        <button class="index-btn">Build and Save Index</button>
-        <div class="placeholder"></div>
-      </div>
+      <button onclick="NewDocument()">New Document</button>
+    </div>
+    <div>
+      <input type="text" id="query"/>
+      <button class="search-btn">Search</button>  
     </div>
   </div>
 </body>

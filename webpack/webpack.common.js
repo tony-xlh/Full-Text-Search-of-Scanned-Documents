@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: {
     index: Path.resolve(__dirname, '../src/scripts/index.js'),
+    search: Path.resolve(__dirname, '../src/scripts/search.js'),
     document: Path.resolve(__dirname, '../src/scripts/document.js')
   },
   experiments: {
@@ -45,6 +46,11 @@ module.exports = {
       template: Path.resolve(__dirname, '../src/index.html'),
       filename: "index.html",
       chunks: ['index'],
+    }),
+    new HtmlWebpackPlugin({
+      template: Path.resolve(__dirname, '../src/search.html'),
+      filename: "search.html",
+      chunks: ['search'],
     }),
     new HtmlWebpackPlugin({
       template: Path.resolve(__dirname, '../src/document.html'),
