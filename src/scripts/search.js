@@ -77,7 +77,7 @@ async function search(){
     link.href = "javascript:void();";
     link.addEventListener("click",function(){
       //DWObject.CurrentImageIndexInBuffer = pageIndex;
-      window.open("document.html?timestamp="+timestamp+"&page="+pageIndex,"_blank");
+      window.open("document.html?timestamp="+timestamp+"&page="+pageIndex+"&query="+encodeURIComponent(query),"_blank");
     });
     link.innerText = "Document: "+getDocumentDate(timestamp)+", Page "+(pageIndex+1);
     item.append(link);

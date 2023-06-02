@@ -2,6 +2,7 @@ import Dynamsoft from "dwt";
 import { createWorker } from 'tesseract.js';
 import { getUrlParam } from './utils';
 import localForage from "localforage";
+import '../styles/document.scss';
 
 let DWObject;
 let worker;
@@ -244,6 +245,7 @@ function getAllImageIndex(){
 
 async function LoadProject(){
   timestamp = getUrlParam("timestamp");
+  let query = getUrlParam("query");
   let pageIndex = getUrlParam("page");
   if (timestamp) {
     const OCRData = await localForage.getItem(timestamp+"-OCR-Data");
@@ -260,6 +262,9 @@ async function LoadProject(){
             if (pageIndex) {
               DWObject.CurrentImageIndexInBuffer = pageIndex;
               showTextOfPage(pageIndex);
+              if (query) {
+                highlightQuery(query);
+              }
             }else{
               DWObject.CurrentImageIndexInBuffer = 0;
               showTextOfPage(0);
@@ -274,5 +279,17 @@ async function LoadProject(){
   }else{
     timestamp = Date.now();
   }
+}
+
+function highlightQuery(query){
+  let content = document.getElementsByClassName("text")[0].innerHTML;
+
+  // Build regex
+  const regexForContent = new RegExp(query, 'gi');
+  console.log(regexForContent);
+  // Replace content where regex matches
+  content = content.replace(regexForContent, "<span class='hightlighted'>$&</span>");
+
+  document.getElementsByClassName("text")[0].innerHTML = content;
 }
 

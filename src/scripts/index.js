@@ -1,4 +1,5 @@
 import localForage from "localforage";
+import '../styles/index.scss';
 
 document.getElementsByClassName("search-btn")[0].addEventListener("click",function(){
   search();
