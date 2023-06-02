@@ -1,6 +1,10 @@
 # Full-Text-Search-of-Scanned-Documents
 
-Demo of Using Full-Text Search on Documents Scanned with [Dynamic Web TWAIN](https://www.dynamsoft.com/web-twain/overview/).
+Demo of using full-text search on documents scanned with [Dynamic Web TWAIN](https://www.dynamsoft.com/web-twain/overview/).
+
+FlexSearch is used as the full-text search engine.
+
+[Online demo](https://frolicking-muffin-e232fd.netlify.app/)
 
 ### Installation
 
